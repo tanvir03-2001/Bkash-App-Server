@@ -1,0 +1,61 @@
+import { NextFunction, Request, Response } from "express";
+import AppError from "../errorHelpers/AppError";
+import { handleCastError } from "../helper/handleCastError";
+import { handleDuplicatedError } from "../helper/handleDuplicatedError";
+import { handleValidationError } from "../helper/handleValidationError";
+import { handleZodError } from "../helper/handleZodError";
+
+export const globalErrorHandler = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  let statusCode = 500;
+  let message = "Global Error Handler Error";
+  let errorSources: any = [];
+
+  console.log("global");
+
+  // Custom AppError instance error
+  if (err instanceof AppError) {
+    statusCode = err.statusCode;
+    message = err.message;
+  } else if (err instanceof Error) {
+    statusCode = 500;
+    message = err.message;
+  }
+  // Duplicate error
+  else if (err.code === 11000) {
+    const simplifiedError = handleDuplicatedError(err);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+  }
+  // Object ID error / cast error
+  else if (err.name === "CastError") {
+    const simplifiedError = handleCastError(err);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+  }
+  // Validation error
+  else if (err.name === "ValidationError") {
+    const simplifiedError = handleValidationError(err);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorSources = simplifiedError.errorSources;
+  }
+  // Zod error
+  else if (err.name === "ZodError") {
+    const simplifiedError = handleZodError(err);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorSources = simplifiedError.errorSources;
+  }
+
+  res.status(statusCode).json({
+    success: false,
+    message,
+    err: err,
+    stack: err.stack,
+  });
+};
