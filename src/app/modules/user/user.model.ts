@@ -1,23 +1,18 @@
 import { model, Schema } from "mongoose";
-import { AccountType, IUser } from "./user.interface";
+import { AgentStatus, IUser, Role } from "./user.interface";
 
 const userSchema = new Schema<IUser>(
   {
-    first_name: { type: String, required: true, maxlength: 10, minlength: 3 },
-    last_name: { type: String, required: true, maxlength: 10, minlength: 3 },
-    account_type: {
-      type: String,
-      enum: Object.values(AccountType),
-      default: AccountType.USER,
-    },
-    password: { type: String, required: true },
-    email: { type: String, required: true },
-    nid: { type: Number, required: true },
+    name: { type: String, required: true },
     phone: { type: String, required: true },
+    nid: { type: Number, required: true },
+    role: { type: String, enum: Object.values(Role), required: true },
+    agentStatus: { type: String, enum: Object.values(AgentStatus) },
+    password: { type: String, required: true },
   },
   {
-    versionKey: false,
     timestamps: true,
+    versionKey: false,
   }
 );
 

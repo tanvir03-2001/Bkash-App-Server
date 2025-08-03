@@ -1,17 +1,21 @@
-export enum AccountType {
+export enum Role {
   USER = "USER",
   AGENT = "AGENT",
   ADMIN = "ADMIN",
   SUPPER_ADMIN = "SUPPER_ADMIN",
 }
 
+export enum AgentStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  SUSPENDED = "SUSPENDED",
+}
+
 export interface IUser {
-  _id?: string;
-  first_name: string;
-  last_name: string;
+  name: string;
   phone: string;
-  email: string;
   password: string;
   nid: number;
-  account_type: AccountType;
+  role: Role;
+  agentStatus?: AgentStatus;
 }

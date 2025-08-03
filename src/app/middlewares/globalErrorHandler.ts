@@ -15,10 +15,19 @@ export const globalErrorHandler = (
   let message = "Global Error Handler Error";
   let errorSources: any = [];
 
-  console.log("global");
+  console.log("global", err.name);
+
+  // Zod error
+  if (err.name === "ZodError") {
+    console.log("error message", err);
+    const simplifiedError = handleZodError(err);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorSources = simplifiedError.errorSources;
+  }
 
   // Custom AppError instance error
-  if (err instanceof AppError) {
+  else if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
   } else if (err instanceof Error) {
@@ -40,13 +49,6 @@ export const globalErrorHandler = (
   // Validation error
   else if (err.name === "ValidationError") {
     const simplifiedError = handleValidationError(err);
-    statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errorSources = simplifiedError.errorSources;
-  }
-  // Zod error
-  else if (err.name === "ZodError") {
-    const simplifiedError = handleZodError(err);
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorSources = simplifiedError.errorSources;
