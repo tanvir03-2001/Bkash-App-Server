@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export enum Role {
   USER = "USER",
   AGENT = "AGENT",
@@ -12,6 +14,7 @@ export enum AgentStatus {
 }
 
 export interface IUser {
+  _id?: Types.ObjectId;
   name: string;
   phone: string;
   password: string;
