@@ -4,7 +4,8 @@ import { UserController } from "./user.controller";
 import { registerUserZodSchema } from "./user.validation";
 
 const route = Router();
-
+route.get("/me", UserController.getMe);
+route.get("/all", UserController.getAllUsers);
 route.post(
   "/register",
   validateRequest(registerUserZodSchema),

@@ -1,5 +1,9 @@
 import bcryptjs from "bcryptjs";
+import httpStatus from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
+import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
+import { verifyToken } from "../../utils/jwt";
 import { AgentStatus, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 
@@ -23,6 +27,37 @@ const register = async (payload: Partial<IUser>) => {
   return user;
 };
 
+const getMe = async (token: { accessToken: string; refreshToken: string }) => {
+  if (!token.accessToken) {
+    throw new AppError(httpStatus.BAD_REQUEST, "No Token Received");
+  }
+
+  const decode = verifyToken(
+    token.accessToken,
+    envVars.JWT_ACCESS_SECRET
+  ) as JwtPayload;
+
+  const user = (await User.findOne({
+    phone: decode.phone,
+  }).lean()) as Partial<IUser>;
+
+  if (!user) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User Not Login...");
+  }
+
+  delete user.password;
+
+  return user;
+};
+
+const getAllUsers = async () => {
+  const users = await User.find({}).select("-password");
+  const total = await User.countDocuments();
+  return { users, total };
+};
+
 export const UserServices = {
   register,
+  getMe,
+  getAllUsers,
 };
