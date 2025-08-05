@@ -1,4 +1,5 @@
 import {
+  AmountType,
   ITransaction,
   TransactionStatus,
   TransactionType,
@@ -23,11 +24,13 @@ export const ProcessTransaction = async (
     from: {
       wallet: fromWallet._id,
       type,
+      amount_type: AmountType.DEBIT,
       balance: fromWallet.balance,
     },
     to: {
       wallet: toWallet._id,
       type,
+      amount_type: AmountType.CREDIT,
       balance: toWallet.balance,
     },
   };

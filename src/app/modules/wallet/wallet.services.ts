@@ -126,6 +126,10 @@ const sendMoney = async (
     throw new AppError(403, "Only users can send money");
   }
 
+  if (decoded.phone === phone) {
+    throw new AppError(400, "Cannot send money to yourself");
+  }
+
   const sender = await GetUserByPhone(decoded.phone, Role.USER);
   const receiver = await GetUserByPhone(phone, Role.USER);
 
@@ -183,6 +187,42 @@ const cashIn = async (
   );
 };
 
+const cashOut = async (
+  body: { phone: string; amount: string },
+  accessToken: string
+) => {
+  if (!accessToken) throw new AppError(401, "Access token not provided");
+
+  const { phone, amount } = body;
+  if (!phone || !amount)
+    throw new AppError(400, "Phone and amount are required");
+
+  const amountToTransfer = ValidateAmount(amount);
+  const decoded = VerifyAndDecodeToken(accessToken);
+
+  if (decoded.role !== Role.USER) {
+    throw new AppError(403, "Only user can perform Cash Out");
+  }
+
+  const sender = await GetUserByPhone(decoded.phone, Role.USER);
+
+  const receiver = await GetUserByPhone(phone, Role.AGENT);
+
+  const senderWallet = await GetWalletByUserId(sender._id);
+  if (senderWallet.balance < amountToTransfer) {
+    throw new AppError(403, "Insufficient balance");
+  }
+
+  const receiverWallet = await GetWalletByUserId(receiver._id);
+
+  return ProcessTransaction(
+    senderWallet,
+    receiverWallet,
+    amountToTransfer,
+    TransactionType.CASH_OUT
+  );
+};
+
 export const WalletServices = {
   createWallet,
   blockUser,
@@ -191,4 +231,5 @@ export const WalletServices = {
   withdrawMoney,
   sendMoney,
   cashIn,
+  cashOut,
 };

@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import {
+  AmountType,
   IFromTo,
   ITransaction,
   TransactionStatus,
@@ -11,6 +12,11 @@ const FromToSchema = new Schema<IFromTo>(
     wallet: {
       type: Schema.Types.ObjectId,
       ref: "Wallet",
+      required: true,
+    },
+    amount_type: {
+      type: String,
+      enum: Object.values(AmountType),
       required: true,
     },
     type: {

@@ -3,6 +3,7 @@ import { WalletControllers } from "./wallet.controller";
 
 const route = Router();
 
+route.patch("/cash-out", WalletControllers.cashOut);
 route.patch("/cash-in", WalletControllers.cashIn);
 route.patch("/send-money", WalletControllers.sendMoney);
 route.patch("/add-money", WalletControllers.addMoney);

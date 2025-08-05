@@ -11,11 +11,15 @@ export enum TransactionStatus {
   PENDING = "PENDING",
   COMPLETED = "COMPLETED",
 }
+export enum AmountType {
+  DEBIT = "DEBIT",
+  CREDIT = "CREDIT",
+}
 
 export interface IFromTo {
   wallet: Types.ObjectId;
-
   type: TransactionType;
+  amount_type: AmountType;
   balance: number;
 }
 

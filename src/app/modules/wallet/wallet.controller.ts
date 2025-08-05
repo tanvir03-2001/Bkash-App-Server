@@ -94,6 +94,23 @@ const cashIn = catchAsync(
     });
   }
 );
+const cashOut = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const accessToken = req.cookies.accessToken;
+    const cashOutResult = await WalletServices.cashOut(req.body, accessToken);
+
+    const transactionData = await TransactionServices.createTransaction(
+      cashOutResult
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Cash-Out Successfully",
+      data: transactionData,
+    });
+  }
+);
 
 export const WalletControllers = {
   blockUser,
@@ -102,4 +119,5 @@ export const WalletControllers = {
   withdrawMoney,
   sendMoney,
   cashIn,
+  cashOut,
 };
