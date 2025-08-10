@@ -7,6 +7,16 @@ import { registerUserZodSchema } from "./user.validation";
 
 const route = Router();
 route.get("/me", checkAuth(Role.USER), UserController.getMe);
+route.patch(
+  "/approve",
+  checkAuth(Role.ADMIN, Role.SUPPER_ADMIN),
+  UserController.agentApproved
+);
+route.patch(
+  "/suspend",
+  checkAuth(Role.ADMIN, Role.SUPPER_ADMIN),
+  UserController.agentSuspended
+);
 route.get(
   "/all",
   checkAuth(Role.ADMIN, Role.SUPPER_ADMIN),

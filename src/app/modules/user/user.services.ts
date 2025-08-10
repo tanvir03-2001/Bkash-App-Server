@@ -3,6 +3,7 @@ import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
+import { VerifyAndDecodeToken } from "../../helper/verifyAndDecodeToken";
 import { verifyToken } from "../../utils/jwt";
 import { AgentStatus, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
@@ -56,8 +57,61 @@ const getAllUsers = async () => {
   return { users, total };
 };
 
+// const agent = AgentStatus.APPROVED || AgentStatus.SUSPENDED
+const agentApproved = async (accessToken: string, agentPhone: string) => {
+  if (!agentPhone) {
+    throw new AppError(404, "Updated phone not found");
+  }
+  console.log({ accessToken, agentPhone });
+  const { phone, role } = VerifyAndDecodeToken(accessToken);
+  console.log({ phone, role });
+
+  const adminInfo = await User.find({ phone: phone });
+
+  console.log({ adminInfo });
+
+  if (!adminInfo) {
+    throw new AppError(404, "Admin Not Found");
+  }
+  // if (adminInfo.role !== role) {
+  //   throw new AppError(500, "Admin Not valid");
+  // }
+
+  const updatedAgent = await User.findOneAndUpdate(
+    { phone: agentPhone },
+    { agentStatus: AgentStatus.APPROVED },
+    { upsert: true, runValidators: true }
+  );
+  return updatedAgent;
+};
+// const agent = AgentStatus.APPROVED || AgentStatus.SUSPENDED
+const agentSuspended = async (accessToken: string, agentPhone: string) => {
+  if (!agentPhone) {
+    throw new AppError(404, "Updated phone not found");
+  }
+  const { phone, role } = VerifyAndDecodeToken(accessToken);
+
+  const adminInfo = await User.findOne({ phone: phone });
+
+  if (!adminInfo) {
+    throw new AppError(404, "Admin Not Found");
+  }
+  if (adminInfo.role !== role) {
+    throw new AppError(500, "Admin Not valid");
+  }
+
+  const updatedAgent = await User.findOneAndUpdate(
+    { phone: agentPhone },
+    { agentStatus: AgentStatus.SUSPENDED },
+    { upsert: true, runValidators: true }
+  );
+  return updatedAgent;
+};
+
 export const UserServices = {
   register,
   getMe,
+  agentApproved,
+  agentSuspended,
   getAllUsers,
 };

@@ -50,9 +50,42 @@ const getAllUsers = catchAsync(
     });
   }
 );
+const agentApproved = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.cookies.accessToken, req.body);
+    const user = await UserServices.agentApproved(
+      req.cookies.accessToken,
+      req.body.phone
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Agent Approved successfully",
+      data: {},
+    });
+  }
+);
+
+const agentSuspended = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await UserServices.agentSuspended(
+      req.cookies.accessToken,
+      req.body.phone
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Agent Suspended successfully",
+      data: user,
+    });
+  }
+);
 
 export const UserController = {
   register,
   getMe,
   getAllUsers,
+  agentApproved,
+  agentSuspended,
 };
