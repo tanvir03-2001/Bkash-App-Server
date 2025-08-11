@@ -27,11 +27,6 @@ route.patch(
   checkAuth(Role.ADMIN, Role.SUPPER_ADMIN),
   UserController.agentSuspended
 );
-route.get(
-  "/all",
-  checkAuth(Role.ADMIN, Role.SUPPER_ADMIN),
-  UserController.getAllUsers
-);
 route.post(
   "/register",
   validateRequest(registerUserZodSchema),

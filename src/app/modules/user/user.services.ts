@@ -50,12 +50,6 @@ const getMe = async (token: { accessToken: string; refreshToken: string }) => {
   return user;
 };
 
-const getAllUsers = async () => {
-  const users = await User.find({}).select("-password");
-  const total = await User.countDocuments();
-  return { users, total };
-};
-
 // const agent = AgentStatus.APPROVED || AgentStatus.SUSPENDED
 const agentApproved = async (accessToken: string, agentPhone: string) => {
   if (!agentPhone) {
@@ -118,7 +112,6 @@ export const UserServices = {
   getMe,
   agentApproved,
   agentSuspended,
-  getAllUsers,
   allAgents,
   allUsers,
 };

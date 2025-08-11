@@ -37,21 +37,6 @@ const getMe = catchAsync(
   }
 );
 
-const getAllUsers = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { total, users } = await UserServices.getAllUsers();
-
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Users Get Successfully",
-      data: users,
-      meta: {
-        total,
-      },
-    });
-  }
-);
 const agentApproved = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = await UserServices.agentApproved(
@@ -110,7 +95,6 @@ const allUsers = catchAsync(
 export const UserController = {
   register,
   getMe,
-  getAllUsers,
   agentApproved,
   agentSuspended,
   allUsers,
