@@ -18,12 +18,11 @@ const register = async (payload: Partial<IUser>) => {
   }
   const hashPassword = await bcryptjs.hash(password as string, 10);
 
-  let newUser = { ...payload, password: hashPassword };
+  const newUser = { ...payload, password: hashPassword };
   if (role === Role.AGENT) {
     newUser.agentStatus = AgentStatus.PENDING;
   }
 
-  console.log("isUserExist", hashPassword);
   const user = User.create(newUser);
   return user;
 };
@@ -62,13 +61,10 @@ const agentApproved = async (accessToken: string, agentPhone: string) => {
   if (!agentPhone) {
     throw new AppError(404, "Updated phone not found");
   }
-  console.log({ accessToken, agentPhone });
-  const { phone, role } = VerifyAndDecodeToken(accessToken);
-  console.log({ phone, role });
+
+  const { phone } = VerifyAndDecodeToken(accessToken);
 
   const adminInfo = await User.find({ phone: phone });
-
-  console.log({ adminInfo });
 
   if (!adminInfo) {
     throw new AppError(404, "Admin Not Found");
@@ -108,10 +104,21 @@ const agentSuspended = async (accessToken: string, agentPhone: string) => {
   return updatedAgent;
 };
 
+const allAgents = async () => {
+  const allAgents = await User.findOne({ role: Role.AGENT });
+  return allAgents;
+};
+const allUsers = async () => {
+  const allUsers = await User.findOne({ role: Role.USER });
+  return allUsers;
+};
+
 export const UserServices = {
   register,
   getMe,
   agentApproved,
   agentSuspended,
   getAllUsers,
+  allAgents,
+  allUsers,
 };

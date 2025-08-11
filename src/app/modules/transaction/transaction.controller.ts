@@ -5,6 +5,7 @@ import { sendResponse } from "../../utils/sendResponse";
 import { TransactionServices } from "./transaction.services";
 
 const myTransaction = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.accessToken;
 
@@ -22,6 +23,26 @@ const myTransaction = catchAsync(
   }
 );
 
+const allTransaction = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, next: NextFunction) => {
+    const all = await TransactionServices.allTransaction();
+
+    const message =
+      all.length === 0
+        ? "No Transaction Found"
+        : "Transaction Get Successfully";
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message,
+      data: all,
+    });
+  }
+);
+
 export const TransactionController = {
   myTransaction,
+  allTransaction,
 };

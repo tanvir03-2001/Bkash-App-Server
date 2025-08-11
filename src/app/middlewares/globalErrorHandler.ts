@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
 import AppError from "../errorHelpers/AppError";
 import { handleCastError } from "../helper/handleCastError";
@@ -15,11 +17,8 @@ export const globalErrorHandler = (
   let message = "Global Error Handler Error";
   let errorSources: any = [];
 
-  console.log("global", err.name);
-
   // Zod error
   if (err.name === "ZodError") {
-    console.log("error message", err);
     const simplifiedError = handleZodError(err);
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;

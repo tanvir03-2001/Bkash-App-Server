@@ -7,7 +7,9 @@ import {
 import { BalanceUpdate } from "../utils/balanceUpdate";
 
 export const ProcessTransaction = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fromWallet: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   toWallet: any,
   amount: number,
   type: TransactionType

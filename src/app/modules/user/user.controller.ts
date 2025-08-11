@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import { catchAsync } from "../../utils/catchAsync";
@@ -52,7 +54,6 @@ const getAllUsers = catchAsync(
 );
 const agentApproved = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.cookies.accessToken, req.body);
     const user = await UserServices.agentApproved(
       req.cookies.accessToken,
       req.body.phone
@@ -61,7 +62,7 @@ const agentApproved = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       message: "Agent Approved successfully",
-      data: {},
+      data: user,
     });
   }
 );
@@ -81,6 +82,30 @@ const agentSuspended = catchAsync(
     });
   }
 );
+const allAgents = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const agents = await UserServices.allAgents();
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Agent GET successfully",
+      data: agents,
+    });
+  }
+);
+const allUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const users = await UserServices.allUsers();
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Users GET successfully",
+      data: users,
+    });
+  }
+);
 
 export const UserController = {
   register,
@@ -88,4 +113,6 @@ export const UserController = {
   getAllUsers,
   agentApproved,
   agentSuspended,
+  allUsers,
+  allAgents,
 };

@@ -6,6 +6,7 @@ import { setAuthCookie } from "../../utils/setCookie";
 import { AuthServices } from "./auth.services";
 
 const login = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: Request, res: Response, next: NextFunction) => {
     const { jwtToken, user } = await AuthServices.login(req.body);
 

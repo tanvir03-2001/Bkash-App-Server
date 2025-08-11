@@ -22,7 +22,14 @@ const myTransaction = async (token: string) => {
   return matchedTransactions;
 };
 
+const allTransaction = async () => {
+  const all = await Transaction.find({});
+
+  return all;
+};
+
 export const TransactionServices = {
   createTransaction,
   myTransaction,
+  allTransaction,
 };
